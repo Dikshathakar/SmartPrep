@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>View Results | SmartPrep</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/viewResults.css">
+
+</head>
+<body>
+
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>                        
+                </button>
+                <a class="navbar-brand" href="/user" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/dashboard">Dashboard</a></li>
+              <li><a href="/auth/logout">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="text-center"><span class="glyphicon glyphicon-stats"></span> Your Test Results</h2>
+
+        <% if (results.length > 0) { %>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Test Title</th>
+                        <th>Score</th>
+                        <th>Submitted On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% results.forEach(result => { %>
+                        <tr>
+                            <td><%= result.testId ? result.testId.title : 'Untitled Test' %></td>
+                            <td><%= result.score %> / <%= result.totalMarks || (result.testId ? result.testId.questions.length : 'N/A') %></td>
+                            <td>
+                                <%= result.submittedAt 
+                                    ? new Date(result.submittedAt).toLocaleDateString() 
+                                    : (result.createdAt ? new Date(result.createdAt).toLocaleDateString() : 'N/A') 
+                                %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <div class="alert alert-info text-center">
+                No test results available.
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>

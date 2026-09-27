@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>View Results | Admin Panel</title>
+<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/adminHeader.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .container {
+            margin-top: 50px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .table th, .table td {
+            text-align: center;
+        }
+        .btn-action {
+            margin: 2px;
+        }
+        h2{
+          text-align: center;
+          margin-bottom: 10px;
+        }
+    </style>
+    </head>
+<body>
+<!-- ✅ Navigation Bar -->
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" id="logo">
+                <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/admin/adminDashboard">Dashboard</a></li>
+                <li><a href="/admin/logout" class="text-danger">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>View All Results</h2>
+
+    <% if (success) { %>
+        <div class="alert alert-success"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+        <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr class="bg-primary">
+                <th>Student</th>
+                <th>Test</th>
+                <th>Score</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% results.forEach(result => { %>
+            <tr>
+                <td>
+                    <%= result.userId ? result.userId.firstName + " " + result.userId.lastName : 'Unknown User' %>
+                </td>
+                <td>
+                    <%= result.testId ? result.testId.title : 'Deleted Test' %>
+                </td>
+                <td><%= result.score %></td>
+                <td>
+                    <% if (result.testId) { %>
+                        <a href="/admin/result/edit/<%= result._id %>" class="btn btn-warning btn-sm">Edit</a>
+                    <% } %>
+                    <form action="/admin/result/delete/<%= result._id %>" method="POST" style="display:inline;">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+    <title>Admin|Add Interview Questions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/adminHeader.css">
+    <link rel="stylesheet" href="/css/addQuestions.css">
+
+  
+  <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const success = urlParams.get('success');
+      const error = urlParams.get('error');
+
+      if (success) {
+        alert(success);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      if (error) {
+        alert(error);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+</script>
+
+</head>
+<body>
+
+  <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/adminDashboard" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/admin/adminDashboard">Dashboard</a></li>
+                    <li><a href="/admin/logout" class="text-danger">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <h2>Add Questions</h2>
+  <form action="/admin/add" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+  <label for="company">Company:</label>
+  <input type="text" name="company" id="company" required /><br/>
+
+  <label for="category">Category:</label>
+  <select id="category" name="category" onchange="toggleSubcategory()" required>
+    <option value="">-- Select Category --</option>
+    <option value="technical">Technical</option>
+    <option value="programming">Programming</option>
+    <option value="aptitude">Aptitude</option>
+  </select><br/>
+
+  <div id="subcategoryDiv" style="display: none;">
+    <label for="subcategory">Subcategory:</label>
+    <select name="subcategory" id="subcategory">
+      <option value="">-- Select Subcategory --</option>
+      <option value="python">Python</option>
+      <option value="c">C</option>
+      <option value="data structures">Data Structures</option>
+      <option value="java">Java</option>
+      <option value="database">Database</option>
+    </select><br/>
+  </div>
+
+  <label for="type">Type:</label>
+  <select name="type" id="type" required>
+    <option value="">-- Select Type --</option>
+    <option value="recentlyAsked">Recently Asked</option>
+    <option value="frequentlyAsked">Frequently Asked</option>
+  </select><br/>
+
+  <label for="question">Question:</label>
+  <textarea name="question" id="question" rows="4" cols="50" required></textarea><br/>
+
+  <label for="answer">Answer:</label>
+    <textarea name="answer" id="answer" rows="4" cols="50" required></textarea><br/>
+
+  <button type="submit">Add Question</button>
+</form>
+
+
+  <script>
+    function toggleSubcategory() {
+      const category = document.getElementById('category').value;
+      const subDiv = document.getElementById('subcategoryDiv');
+      if (category === 'technical' || category === 'programming') {
+        subDiv.style.display = 'block';
+      } else {
+        subDiv.style.display = 'none';
+      }
+    }
+  </script>
+
+</body>
+</html>

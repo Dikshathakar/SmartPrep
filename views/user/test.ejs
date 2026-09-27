@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SmartPrep</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+    <style>
+        body {
+            background: #f5f7fa;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .exam-container {
+            max-width: 850px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px 35px;
+            border-radius: 12px;
+            box-shadow: 0px 8px 18px rgba(0,0,0,0.12);
+        }
+
+        #timer {
+            font-size: 18px;
+            background: #ff4d4d;
+            padding: 6px 12px;
+            color: white;
+            border-radius: 6px;
+            float: right;
+        }
+
+        .question-block {
+            display: none;
+            padding: 20px;
+            border-radius: 10px;
+            background: #ffffff;
+            border: 2px solid #ddd;
+            transition: 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .active-question {
+            display: block;
+            border-color: #4099ff;
+            box-shadow: 0px 5px 15px rgba(0, 136, 255, 0.15);
+        }
+
+        .answered {
+            border-color: #5cb85c !important;
+            background: #f5fff5;
+        }
+        .unanswered {
+            border-color: #ff6666;
+            background: #fff5f5;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="exam-container">
+    <h2>
+        <%= test.title %>
+        <span id="timer">30:00</span>
+    </h2>
+
+    <form id="testForm" action="/user/submit-test" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="testId" value="<%= test._id %>">
+
+        <% test.questions.forEach((q, index) => { %>
+            <div class="question-block <% if (index === 0) { %>active-question<% } %> unanswered"
+                 data-index="<%= index %>" id="q-<%= index %>">
+
+                <h4><strong>Q<%= index + 1 %></strong>: <%= q.questionText %></h4>
+
+                <% q.options.forEach((opt) => { %>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="answers[<%= q._id %>]" value="<%= opt %>">
+                            <%= opt %>
+                        </label>
+                    </div>
+                <% }); %>
+
+            </div>
+        <% }); %>
+
+        <div class="text-center" style="margin-top: 20px;">
+            <button type="button" class="btn btn-default" id="prevBtn" disabled>Previous</button>
+            <button type="button" class="btn btn-default" id="nextBtn">Next</button>
+            <button type="submit" class="btn btn-primary" id="submitBtn" style="display:none;">Submit</button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+/* ================================================================
+   ANTI CHEAT LOGIC
+================================================================ */
+
+let violation = 0;
+let testSubmitted = false;
+
+function safeSubmit() {
+    if (!testSubmitted) {
+        testSubmitted = true;
+        document.getElementById("testForm").submit();
+    }
+}
+
+function addViolation(reason) {
+    if (testSubmitted) return;
+
+    violation++;
+    alert("⚠ Violation: " + reason);
+
+    if (violation > 4) {
+        alert("❌ Too many violations. Submitting test.");
+        safeSubmit();
+    }
+}
+
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) addViolation("Tab Switch Detected");
+});
+window.addEventListener("blur", () => addViolation("Window Unfocused"));
+
+document.addEventListener("copy", e => { e.preventDefault(); addViolation("Copy Attempt"); });
+document.addEventListener("cut", e => { e.preventDefault(); addViolation("Cut Attempt"); });
+document.addEventListener("paste", e => { e.preventDefault(); addViolation("Paste Attempt"); });
+
+window.onbeforeunload = () => !testSubmitted ? "You cannot leave the exam." : null;
+
+/* ================================================================
+   CAMERA PROCTORING (WORKING)
+================================================================ */
+
+async function startProctoring() {
+
+    await faceapi.nets.tinyFaceDetector.loadFromUri("/models/");
+
+
+    const camBox = document.createElement("video");
+    camBox.autoplay = true;
+    camBox.muted = true;
+    camBox.playsInline = true;
+    camBox.id = "testCam";
+
+    camBox.style.position = "fixed";
+    camBox.style.right = "10px";
+    camBox.style.bottom = "10px";
+    camBox.style.width = "150px";
+    camBox.style.height = "120px";
+    camBox.style.border = "2px solid #007bff";
+    camBox.style.borderRadius = "10px";
+    camBox.style.zIndex = "9999";
+
+    document.body.appendChild(camBox);
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        camBox.srcObject = stream;
+
+        camBox.onloadedmetadata = () => {
+            camBox.play();
+        runDetection(camBox);
+        }
+
+
+    } catch (err) {
+        addViolation("Camera Disabled");
+    }
+}
+
+async function runDetection(cam) {
+    setInterval(async () => {
+        const face = await faceapi.detectSingleFace(
+            cam,
+            new faceapi.TinyFaceDetectorOptions()
+        );
+
+        if (face) {
+            const canvas = document.createElement("canvas");
+            canvas.width = cam.videoWidth;
+            canvas.height = cam.videoHeight;
+            canvas.getContext("2d").drawImage(cam, 0, 0);
+
+            const imageData = canvas.toDataURL("image/png");
+
+            fetch("/user/proctor-upload", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    image: imageData,
+                    testId: "<%= test._id %>"
+                })
+            });
+        }
+    }, 10000);
+}
+
+/* ================================================================
+   TIMER (FULLY WORKING)
+================================================================ */
+
+function startTimer() {
+    let timeLeft = 30 * 60; // 30 minutes
+
+    const timerEl = document.getElementById("timer");
+
+    const timer = setInterval(() => {
+
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+
+        timerEl.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            alert("⏲ Time is up! Submitting your test.");
+            safeSubmit();
+        }
+
+        timeLeft--;
+
+    }, 1000);
+}
+
+/* ================================================================
+   QUESTION NAVIGATION (unchanged)
+================================================================ */
+
+const questions = document.querySelectorAll(".question-block");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+const submitBtn = document.getElementById("submitBtn");
+
+let current = 0;
+
+function showQ(i) {
+    questions.forEach((q, idx) => {
+        q.classList.toggle("active-question", idx === i);
+    });
+
+    prevBtn.disabled = i === 0;
+    nextBtn.style.display = i === questions.length - 1 ? "none" : "inline-block";
+    submitBtn.style.display = i === questions.length - 1 ? "inline-block" : "none";
+}
+
+nextBtn.onclick = () => { if (current < questions.length - 1) showQ(++current); };
+prevBtn.onclick = () => { if (current > 0) showQ(--current); };
+
+document.querySelectorAll("input[type=radio]").forEach(r => {
+    r.addEventListener("change", e => {
+        const block = e.target.closest(".question-block");
+        block.classList.remove("unanswered");
+        block.classList.add("answered");
+    });
+});
+
+showQ(0);
+
+/* ================================================================
+   PAGE LOAD — START EVERYTHING
+================================================================ */
+
+window.onload = () => {
+    startTimer();
+    startProctoring();
+};
+</script>
+
+</body>
+</html>

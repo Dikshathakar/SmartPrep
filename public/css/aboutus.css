@@ -1,0 +1,95 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff; 
+    color: #333; 
+}
+
+/* Header and Section Titles */
+h2, h3 {
+    color: #1d4ed8; 
+}
+
+h2.section-title {
+    font-weight: bold;
+    font-size: 28px;
+}
+
+h3 {
+    font-size: 20px;
+}
+
+/* About Section */
+.about-section {
+    background-color: #ffffff; 
+    color: #333;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 3rem 1rem;
+}
+
+.about-section .lead {
+    font-size: 18px;
+    font-weight: bold;
+    color: #555;
+}
+
+/* Benefits Section */
+.benefits-section {
+    background-color:#ADD8E6; 
+    color: #333;
+    padding: 3rem 1rem;
+}
+
+.benefits-section .benefit-box {
+    background-color: #ffffff; 
+    border: 1px solid #e3e3e3;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    padding: 2rem 1rem;
+}
+
+.benefits-section .benefit-box h5 {
+    color: #1d4ed8; 
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.benefits-section .benefit-box p {
+    color: #555; 
+}
+
+.text-center {
+    text-align: center;
+}
+
+.container {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.py-5 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.shadow {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .col-md-4 {
+        margin-bottom: 20px;
+    }
+}
+
+.benefit-box:hover {
+    background-color: #f0f9ff;
+    transform: translateY(-5px);
+    transition: all 0.3s ease-in-out;
+}

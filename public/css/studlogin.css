@@ -1,0 +1,72 @@
+
+        body {
+            background-color: white;
+            height: 100%;
+            width: 100%;
+            /*overflow: hidden; */
+            background-repeat: no-repeat;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            margin: auto;
+            margin-top: 40px;
+            background-color: rgba(116, 205, 237, 0.5);
+            border-radius: 10px;
+            width: 50%;
+            padding: 20px; 
+            margin-top: 30px; 
+        }
+        .contact-info img {
+            width: 200px; 
+            height: 250px;
+        }
+
+        .contact-info {
+            width: 40%;
+            padding: 10px;
+            margin-left: 20px;
+        }
+        .enrollForm {
+            width: 55%;
+            padding: 10px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea {
+            padding: 10px;
+            margin: 6px 0;
+            width: 100%;
+            display: inline-block;
+            border: none;
+            box-sizing: border-box;
+            background: none;
+            outline: none;
+            border-bottom: 2px solid #adadad;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            background-color: #454383;
+            color: white;
+            border: 1px solid;
+            cursor: pointer;
+            height: 40px; 
+            border-radius: 25px;
+            font-size: 14px;
+        }
+       
+        input[type="submit"]:hover {
+            background-color: #2b2952;
+        }
+        @media screen and (max-width: 600px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+    

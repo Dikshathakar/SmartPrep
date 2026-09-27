@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Dashboard | SmartPrep</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/adminHeader.css">
+    <link rel="stylesheet" href="/css/adminDashboard.css">
+
+</head>
+
+<body>
+    <!-- ✅ Navigation Bar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/admin/adminDashboard">Dashboard</a></li>
+                    <li><a href="/admin/logout" class="text-danger">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ✅ Sidebar for Admin Profile -->
+    <div class="sidebar">
+        <img src="/images/userr.png" alt="Admin Profile">
+        <h3>Admin Panel</h3>
+        <p>Email: <%= admin.email %></p>
+        <div class="logout-btn">
+            <a href="/admin/logout" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
+
+    <!-- ✅ Admin Dashboard -->
+    <div class="dashboard-container">
+        <h2 class="dashboard-heading">Welcome, Admin!</h2>
+
+        <div class="dashboard-cards">
+
+            <div class="card">
+        <h5><span class="glyphicon glyphicon-plus-sign"></span> Create Logins</h5>
+        <p>Create and manage logins.</p>
+        <a href="/admin/upload-students" class="btn btn-primary">Create Logins</a>
+        </div>
+        
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-user"></span> Manage Users</h5>
+        <p>Manage student accounts.</p>
+        <a href="/admin/manageUsers" class="btn btn-primary">Go to Users</a>
+    </div>
+
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-calendar"></span> Schedule Tests</h5>
+        <p>Plan and assign test schedules.</p>
+        <a href="/admin/schedule/create" class="btn btn-primary">Create New Schedule</a>
+    </div>
+
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-eye-open"></span> View Schedule</h5>
+        <p>Plan and assign test schedules.</p>
+        <a href="/admin/schedule" class="btn btn-primary">View Schedule</a>
+    </div>
+
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-plus-sign"></span> Create Test</h5>
+        <p>Create and manage tests.</p>
+        <a href="/admin/createTest" class="btn btn-primary">Create Test</a>
+    </div>
+
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-pencil"></span> Manage Tests</h5>
+        <p>Manage test questions.</p>
+        <a href="/admin/manageTests" class="btn btn-primary">Go to Tests</a>
+    </div>
+
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-upload"></span> Manage Interview Questions Files</h5>
+        <p>Upload and manage interview questions</p>
+        <a href="/admin/uploadInterviewExcel" class="btn btn-primary">Upload Interview Questions</a>
+    </div>
+
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-comment"></span> Manage Chatbot</h5>
+        <p>Add and manage interview questions</p>
+        <a href="/admin/addInterviewQuestions" class="btn btn-primary">Create Interview Questions</a>
+    </div>
+
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-edit"></span> Manage Interview Questions</h5>
+        <p>View, edit, or delete interview questions.</p>
+        <a href="/admin/questions" class="btn btn-primary">Go to Question List</a>
+    </div>
+
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-list-alt"></span> Manage Result</h5>
+        <p>Add student test results manually.</p>
+        <a href="/admin/result/add" class="btn btn-primary">Add Result</a>
+    </div>
+
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-stats"></span> View Reports</h5>
+        <p>Analyze test results and performance.</p>
+        <a href="/admin/reports" class="btn btn-primary">Go to Reports</a>
+    </div>
+
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-envelope"></span> Manage Contacts</h5>
+        <p>View and manage contact messages.</p>
+        <a href="/admin/manageContacts" class="btn btn-primary">Go to Contacts</a>
+    </div>
+</div>
+
+        
+    </div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Test Result | SmartPrep</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/header.css">
+    <style>
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .meta {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .answer-list li {
+            margin-bottom: 5px;
+        }
+        h4{
+            color: black !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/user" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/auth/logout">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <% if (!result) { %>
+            <div class="alert alert-info text-center">
+                No result found to display.
+            </div>
+        <% } else { %>
+            <h2 class="text-center">📄 Test Result: <%= result.testId?.title || "Untitled Test" %></h2>
+            <p><strong>Submitted on:</strong> <%= new Date(result.submittedAt).toLocaleString() %></p>
+            <p><strong>Score:</strong> <%= result.score %> / <%= result.totalMarks %></p>
+            <% 
+                let performanceClass = '';
+                if (result.performance === "Good") {
+                    performanceClass = 'alert alert-success';   
+                } else if (result.performance === "Average") {
+                    performanceClass = 'alert alert-info';
+                } else if (result.performance === "Poor") {
+                    performanceClass = 'alert alert-danger';    
+                } else {
+                    performanceClass = 'alert alert-secondary'; 
+                }
+            %>
+
+            <div class="<%= performanceClass %> p-3 rounded">
+                <h4>Your's Performance </h4>
+                <p><strong>Performance:</strong> <%= result.performance %></p>
+                <p><strong>Feedback:</strong> <%= result.feedback %></p>
+            </div>
+
+
+            <hr>
+
+            <% if (result.testId && result.testId.questions && result.testId.questions.length > 0) { %>
+                <% result.testId.questions.forEach((q, index) => { %>
+                    <div class="question">
+                        <h4>Q<%= index + 1 %>: <%= q.questionText %></h4>
+                        <div class="meta">
+                            <strong>Topic:</strong> <%= q.topic || "N/A" %> | 
+                            <strong>Difficulty:</strong> <%= q.level || "N/A" %>
+                        </div>
+                        <ul class="answer-list">
+                            <% q.options.forEach(opt => { 
+                                const userAnswer = result.answers[q._id.toString()];
+                                const isCorrect = q.correctAnswer?.trim() === opt?.trim();
+                                const isUserAnswer = userAnswer?.trim() === opt?.trim();
+                            %>
+                                <li>
+                                    <%= opt %>
+                                    <% if (isCorrect) { %> ✅ Correct Answer <% } %>
+                                    <% if (isUserAnswer && !isCorrect) { %> ❌ Your Answer <% } %>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                <% }) %>
+            <% } %>
+        <% } %>
+    </div>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Student SignUp</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/studlogin.css">
+</head>
+<body>
+    <!-- ✅ Navbar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/instructions">Test</a></li>
+                    <li><a href="/aboutus">About</a></li>
+                    <li><a href="/contactus">Contact</a></li>
+                    <li><a href="/studlogin" class="text-danger">Student Login</a></li>
+                    <li><a href="/adminsignin" class="text-danger">Admin Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ✅ Registration Form -->
+    <div class="container">
+        <div class="contact-info">
+            <h1><b>Welcome!</b></h1>
+            <h4>Create your account</h4>
+            <br>
+            <img src="/images/login.png">
+        </div>
+
+        <div class="enrollForm">
+            <form id="registrationForm" method="POST" action="/auth/submit">
+                <input type="hidden" name="_csrf" id="csrfToken" value="<%= csrfToken %>">
+
+                <!-- ✅ Full Name -->
+                <div>
+                    <input type="text" id="studentName" name="studentName" placeholder="Full Name" required>
+                    <p class="error" id="nameError"></p>
+                </div>
+
+                <!-- ✅ Class -->
+                <div>
+                    <input type="text" id="studentClass" name="studentClass" placeholder="Class" required>
+                    <p class="error" id="classError"></p>
+                </div>
+
+                <!-- ✅ PRN -->
+                <div>
+                    <input type="text" id="prn" name="prn" placeholder="PRN Number" required>
+                    <p class="error" id="prnError"></p>
+                </div>
+
+                <!-- ✅ Email (optional) -->
+                <div>
+                    <input type="email" id="email" name="email" placeholder="Email (optional)">
+                    <p class="error" id="emailError"></p>
+                </div>
+
+                <!-- ✅ Password -->
+                <div>
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                    <p class="error" id="passwordError"></p>
+                </div>
+
+                <div>
+                    <input type="checkbox" id="showPassword">
+                    <label for="showPassword">Show Password</label>
+                </div>
+
+                <input type="submit" value="Submit" class="btn btn-primary btn-block">
+                <center>
+                    <p>Already have an account?</p>
+                    <a href="/signin"><b>Sign In</b></a>
+                </center>
+            </form>
+        </div>
+    </div>
+
+    <!-- ✅ JavaScript Validation -->
+    <script>
+        document.getElementById("showPassword").addEventListener("click", function () {
+            const pass = document.getElementById("password");
+            pass.type = pass.type === "password" ? "text" : "password";
+        });
+
+        document.getElementById("registrationForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const nameRegex = /^[A-Za-z ]+$/;
+            const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+
+            let valid = true;
+
+            const studentName = document.getElementById("studentName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            document.getElementById("nameError").innerText = "";
+            document.getElementById("emailError").innerText = "";
+            document.getElementById("passwordError").innerText = "";
+
+            if (!nameRegex.test(studentName)) {
+                document.getElementById("nameError").innerText = "Invalid name";
+                valid = false;
+            }
+
+            if (email && !emailRegex.test(email)) {
+                document.getElementById("emailError").innerText = "Invalid email";
+                valid = false;
+            }
+
+            if (password.length < 6) {
+                document.getElementById("passwordError").innerText = "Password must be at least 6 characters";
+                valid = false;
+            }
+
+            if (!valid) return;
+
+            const formData = new FormData(this);
+            try {
+                const response = await fetch("/auth/submit", {
+                    method: "POST",
+                    body: new URLSearchParams(formData),
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert("Registration successful!");
+                    window.location.href = result.redirect || "/signin";
+                } else {
+                    alert(result.error || "Registration failed");
+                }
+            } catch (err) {
+                alert("Error: " + err.message);
+            }
+        });
+    </script>
+</body>
+</html>

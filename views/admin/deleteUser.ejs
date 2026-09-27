@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Delete User | Admin Panel</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/adminHeader.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .container {
+            margin-top: 50px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .btn {
+            margin: 10px;
+        }
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/adminDashboard" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/admin/adminDashboard">Dashboard</a></li>
+                    <li><a href="/admin/logout" class="text-danger">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h2 class="text-danger">Confirm User Deletion</h2>
+        <p>Are you sure you want to delete the following user?</p>
+        
+        <% if (user) { %>
+            <h3><%= user.firstName %> <%= user.lastName %></h3>
+            <p>Email: <%= user.email %></p>
+            <p>Class: <%= user.studentClass %></p>
+            
+            <form action="/admin/deleteUser/<%= user._id %>?_method=DELETE" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn btn-danger">Delete</button>
+                <a href="/admin/manageUsers" class="btn btn-secondary">Cancel</a>
+            </form>
+            
+        <% } else { %>
+            <p class="text-danger">Error: User not found.</p>
+            <a href="/admin/manageUsers" class="btn btn-primary">Back to Users</a>
+        <% } %>
+    </div>
+</body>
+</html>

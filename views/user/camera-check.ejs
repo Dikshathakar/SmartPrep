@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Camera Check</title>
+  <style>
+    body { text-align:center; margin-top:40px; font-family:Arial; }
+    #videoBox { width:350px; height:260px; border:3px solid #1E90FF; margin:20px auto; border-radius:12px; }
+    #captureBtn, #startBtn {
+      padding:12px 22px; font-size:16px; border:none; border-radius:6px; margin-top:15px;
+    }
+    #captureBtn { background:#007bff; color:white; }
+    #startBtn { background:grey; color:white; cursor:not-allowed; }
+    #startBtn.enabled { background:#28a745; cursor:pointer; }
+  </style>
+</head>
+<body>
+
+<h2>📷 Camera Test Before Starting Exam</h2>
+<p>Please allow camera access. Capture one photo before starting the test.</p>
+
+<div id="videoBox">
+  <video id="video" width="340" height="250" autoplay muted></video>
+</div>
+
+<canvas id="snapshotCanvas" width="340" height="250" style="display:none;"></canvas>
+
+<button id="captureBtn">Capture Photo</button>
+<br>
+<button id="startBtn" disabled>Start Test</button>
+
+<script>
+  // debug helper
+  function log(...args) { console.log("[camera-check]", ...args); }
+
+  // show allow alert and start camera
+  window.onload = () => {
+    alert("Click ALLOW to enable camera.");
+    startCamera();
+  };
+
+  async function startCamera(){
+    try{
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = document.getElementById("video");
+      video.srcObject = stream;
+      log("Camera started");
+    } catch(err){
+      console.error(err);
+      alert("Camera permission denied. You cannot proceed.");
+    }
+  }
+
+  document.getElementById("captureBtn").addEventListener("click", async () => {
+    try {
+      const video = document.getElementById("video");
+      const canvas = document.getElementById("snapshotCanvas");
+      const ctx = canvas.getContext("2d");
+
+      if (!video || !video.videoWidth) {
+        alert("Camera not ready yet. Wait a moment and try again.");
+        return;
+      }
+
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const base64Image = canvas.toDataURL("image/png");
+      log("Captured image length:", base64Image.length);
+
+      // show a small visual feedback (optional)
+      // document.getElementById("videoBox").style.border = "3px solid green";
+
+      // prepare fetch options
+      const headers = { "Content-Type": "application/json" };
+      // If you passed csrfToken from server, include it (OPTION B)
+      <% if (typeof csrfToken !== 'undefined') { %>
+      headers['x-csrf-token'] = "<%= csrfToken %>";
+      <% } %>
+
+      const resp = await fetch("/user/proctor-upload", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ image: base64Image, testId: "<%= testId %>" })
+      });
+
+      log("Upload response status:", resp.status);
+      const json = await resp.json();
+      log("Upload JSON:", json);
+
+      if (resp.ok && json.status === "ok") {
+        alert("Photo captured and saved!");
+        const btn = document.getElementById("startBtn");
+        btn.disabled = false;
+        btn.classList.add("enabled");
+      } else {
+        alert("Upload failed: " + (json?.message || resp.statusText));
+      }
+
+    } catch (err) {
+      console.error("Capture/upload error:", err);
+      alert("Capture/upload failed: check console and network tab.");
+    }
+  });
+
+  document.getElementById("startBtn").addEventListener("click", () => {
+    window.location.href = "/user/test/start/<%= testId %>";
+  });
+
+</script>
+</body>
+</html>

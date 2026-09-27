@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Students</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/adminHeader.css">
+    <link rel="stylesheet" href="/css/viewSchedule.css">
+  </head>
+  
+  <body class="bg-light">
+  <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/adminDashboard" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/admin/adminDashboard">Dashboard</a></li>
+                    <li><a href="/admin/logout" class="text-danger">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+<h2>Manage Schedule</h2>
+
+<table class="schedule-table">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Test No</th>
+      <th>Type</th>
+      <th>Subtype</th>
+      <th>Marks</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% schedules.forEach(schedule => { %>
+      <% schedule.tests.forEach((test, index) => { %>
+        <tr>
+          <% if (index === 0) { %>
+            <td rowspan="<%= schedule.tests.length %>">
+              <%= schedule.examDate ? schedule.examDate.toDateString() : "N/A" %>
+            </td>
+          <% } %>
+
+          <td><%= index + 1 %></td>
+          <td><%= test.type || "N/A" %></td>
+          <td><%= test.subtype || "N/A" %></td>
+          <td><%= test.marks || "N/A" %></td>
+
+          <td>
+            <form action="/admin/schedule/<%= schedule._id %>/updateTime" method="POST">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+              <input type="hidden" name="testIndex" value="<%= index %>">
+              <input type="time" name="startTime" value="<%= test.startTime || "" %>" required>
+          </td>
+          <td>
+              <input type="time" name="endTime" value="<%= test.endTime || "" %>" required>
+          </td>
+
+          <td class="schedule-actions">
+            </form>
+            <a href="/admin/schedule/<%= schedule._id %>/edit">Edit</a>
+            
+            <form action="/admin/schedule/<%= schedule._id %>?_method=DELETE" method="POST" style="display:inline;">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit" class="delete-btn" onclick="return confirm('Are you sure?')">Delete</button>
+            </form>
+
+          </td>
+        </tr>
+      <% }) %>
+    <% }) %>
+  </tbody>
+</table>
+</body>
+</html>

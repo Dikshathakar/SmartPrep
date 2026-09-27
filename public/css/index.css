@@ -1,0 +1,47 @@
+nav{
+    opacity: 0.9;
+    background-color: aqua;
+    }
+    .navbar #logo{
+    font-size: 30px;
+    color: black;
+    padding:5px;
+   }
+   .nav li a {
+    font-weight: bold !important;
+    color: black !important;
+    font-size:18px !important;
+   }
+
+body{
+    background-image: url(/images/8.jpg);
+    height: 100%;
+    width: 100%;
+    overflow: hidden; 
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-size: cover;
+}
+h3{
+    color: black;
+    text-align: center;
+}
+.container{
+    height: 200px;
+    width: 500px;
+    align-items: center;
+    margin-top: 200px;
+    margin-bottom: 200px;
+    text-align: right;
+    opacity: 0.6;
+}
+
+#para{
+    text-align:right;
+    color: black;
+    text-align: center;
+    font-size: 44px;
+    padding:0.1rem;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+   }

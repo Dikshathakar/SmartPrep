@@ -1,0 +1,73 @@
+    h2{
+      text-align: center;
+      color: #333;
+    }
+  .schedule-table {
+  width: 90%;
+  border-collapse: collapse;
+  margin: 20px auto 110px auto; /* top auto bottom auto */
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+
+  .schedule-table th {
+    background: #31475f;
+    color: white;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .schedule-table td {
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+    vertical-align: middle;
+  }
+
+  .schedule-table tr:nth-child(even) {
+    background: #f9f9f9;
+  }
+
+  .schedule-table tr:hover {
+    background: #f1f1f1;
+  }
+
+  .schedule-actions button,
+  .schedule-actions a {
+    margin: 2px;
+  }
+
+  .schedule-actions button {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .schedule-actions button:hover {
+    background: #218838;
+  }
+
+  .schedule-actions a {
+    background: #ffc107;
+    padding: 5px 10px;
+    border-radius: 4px;
+    color: black;
+    text-decoration: none;
+  }
+
+  .schedule-actions a:hover {
+    background: #e0a800;
+    color: white;
+  }
+
+  .schedule-actions form button.delete-btn {
+    background: #dc3545;
+  }
+
+  .schedule-actions form button.delete-btn:hover {
+    background: #c82333;
+  }

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Report | Admin Panel</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+    <!-- XLSX -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <link rel="stylesheet" href="/css/adminHeader.css">
+
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        .container { margin-top: 30px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
+        h1, h2 { text-align: center; margin-bottom: 20px; font-weight: 600; }
+        .card-container { display: flex; justify-content: space-around; margin-bottom: 30px; flex-wrap: wrap; }
+        .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; margin: 10px; text-align: center; min-width: 250px; }
+        .card h3 { margin-bottom: 10px; font-weight: 600; }
+        .card p { font-size: 18px; color: #333; }
+        table { width: 100%; border-collapse: collapse; background: #fff; margin-top: 15px; }
+        th, td { padding: 10px 14px; border: 1px solid #444; text-align: center; }
+        thead tr { background-color: #337ab7; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .good { color: green; font-weight: bold; }
+        .average { color: orange; font-weight: bold; }
+        .poor { color: red; font-weight: bold; }
+        .btn { margin-top: 15px; padding: 8px 16px; border: none; cursor: pointer; border-radius: 5px; }
+        .btn-primary { background: #337ab7; color: white; }
+        .btn-primary:hover { background: #286090; }
+        .btn-default { background: #f0f0f0; }
+        .btn-default:hover { background: #e0e0e0; }
+        .btn-export { background: #2fc11f; color: white; }
+        .btn-export:hover { background: #28a745; }
+        .report-search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px; /* spacing between elements */
+  flex-wrap: wrap; /* wrap on small screens */
+}
+
+.report-search input {
+  max-width: 300px;
+  width: 100%;
+  display: inline-block;
+}
+
+.report-search button {
+    margin-bottom: 20px;
+  min-width: 100px;
+  font-weight: bold;
+}
+
+    </style>
+</head>
+<body>
+
+    <!-- ✅ Navbar (same as Manage Users) -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/admin/adminDashboard">Dashboard</a></li>
+                    <li><a href="/admin/logout" class="text-danger">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1><u>Overall Report</u></h1>
+
+        <!-- Summary Cards -->
+        <div class="card-container">
+            <div class="card">
+                <h3>Total Users</h3>
+                <p><%= totalUsers %></p>
+            </div>
+            <div class="card">
+                <h3>Total Tests</h3>
+                <p><%= totalTests %></p>
+            </div>
+            <div class="card">
+                <h3>Average Score</h3>
+                <p><%= avgScore %> %</p>
+            </div>
+            <div class="card">
+                <h3>Good Performers</h3>
+                <p><%= scoreDistribution[0] %> / <%= totalUsers %></p>
+            </div>
+        </div>
+
+        <!-- Donut Chart -->
+        <h2><u>Overall Performance Distribution</u></h2>
+
+        <!-- Search Bar -->
+        <div class="report-search text-center">
+  <input type="text" id="testSearch" class="form-control" placeholder="Search Test (e.g., Test 1)">
+  <button class="btn btn-primary" onclick="filterReport()">Search</button>
+  <button class="btn btn-default" onclick="resetReport()">Reset</button>
+</div>
+
+
+        <div style="max-width: 500px; margin: auto;"> 
+            <canvas id="scorePie" width="400" height="400"></canvas>
+        </div>
+
+        
+
+        <!-- User Performance Table -->
+        <h2 style="margin-top: 40px;"><u>User Performance Table</u></h2>
+        <table id="reportTable" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Email</th>
+                    <% for (let t = 1; t <= maxTests; t++) { %>
+                        <th>Test <%= t %> Score</th>
+                    <% } %>
+                </tr>
+            </thead>
+            <tbody>
+                <% usersArray.forEach((user, i) => { %>
+                    <tr>
+                        <td><%= i + 1 %></td>
+                        <td><%= user.name %></td>
+                        <td><%= user.email %></td>
+                        <% for (let t = 0; t < maxTests; t++) { %>
+                            <td>
+                                <% 
+                                    let score = user.scores[t];
+                                    if (score !== null && score !== undefined) { 
+                                        let percentage = (score / 20) * 100;
+                                %>
+                                    <%= score %> 
+                                    <% if (percentage >= 70) { %><span class="good">(Good)</span><% } 
+                                       else if (percentage >= 40) { %><span class="average">(Average)</span><% } 
+                                       else { %><span class="poor">(Poor)</span><% } %>
+                                <% } else { %>
+                                    -
+                                <% } %>
+                            </td>
+                        <% } %>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+        <!-- Export Button -->
+        <div class="text-center">
+            <button class="btn btn-export" onclick="exportToExcel()">Export to Excel</button>
+        </div>
+    </div>
+
+    <script>
+        const scoreDistributionData = JSON.parse('<%- JSON.stringify(scoreDistribution) %>');
+        const allResults = JSON.parse('<%- JSON.stringify(usersArray) %>');
+        const maxTests = "<%= maxTests %>";
+        const totalMarksPerTest = 20;
+
+        const scorePieChart = new Chart(document.getElementById('scorePie'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Good (70-100%)', 'Average (40-69%)', 'Poor (0-39%)'],
+                datasets: [{ data: scoreDistributionData, backgroundColor: ['green', 'orange', 'red'] }]
+            },
+            options: { responsive: true, cutout: '70%', plugins: { legend: { position: 'top' }, tooltip: { enabled: true } } },
+            plugins: [ChartDataLabels]
+        });
+
+        function filterReport() {
+            const searchValue = document.getElementById("testSearch").value.trim().toLowerCase();
+            if (!searchValue.startsWith("test")) { alert("⚠️ Use format: Test 1, Test 2 ..."); return; }
+            const testNum = parseInt(searchValue.replace("test", "").trim());
+            if (isNaN(testNum) || testNum < 1 || testNum > maxTests) { alert("⚠️ Invalid Test Number!"); return; }
+
+            const tbody = document.querySelector("#reportTable tbody");
+            tbody.innerHTML = "";
+
+            let good = 0, average = 0, poor = 0;
+            allResults.forEach((user, i) => {
+                let row = `<tr><td>${i + 1}</td><td>${user.name}</td><td>${user.email}</td>`;
+                for (let t = 0; t < maxTests; t++) {
+                    if (t === testNum - 1) {
+                        let score = user.scores[t];
+                        if (score !== null && score !== undefined) {
+                            let percentage = (score / totalMarksPerTest) * 100;
+                            let remark = "";
+                            if (percentage >= 70) { remark = `<span class="good">(Good)</span>`; good++; }
+                            else if (percentage >= 40) { remark = `<span class="average">(Average)</span>`; average++; }
+                            else { remark = `<span class="poor">(Poor)</span>`; poor++; }
+                            row += `<td>${score} ${remark}</td>`;
+                        } else {
+                            row += `<td>-</td>`;
+                        }
+                    } else {
+                        row += `<td>-</td>`;
+                    }
+                }
+                row += "</tr>";
+                tbody.innerHTML += row;
+            });
+
+            scorePieChart.data.datasets[0].data = [good, average, poor];
+            scorePieChart.update();
+        }
+
+        function resetReport() { location.reload(); }
+        function exportToExcel() {
+            const table = document.getElementById("reportTable");
+            const workbook = XLSX.utils.table_to_book(table, { sheet: "Report" });
+            XLSX.writeFile(workbook, "Admin_Report.xlsx");
+        }
+    </script>
+</body>
+</html>

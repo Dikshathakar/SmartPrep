@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Edit User | Admin Panel</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/adminHeader.css">
+    <link rel="stylesheet" href="/css/editResult.css">
+
+
+</head>
+<body>
+    <!-- ✅ Navigation Bar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/admin/adminDashboard">Dashboard</a></li>
+                    <li><a href="/admin/logout" class="text-danger">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+<div class="container">
+    <h2 class="text-center">Edit Result</h2>
+    <form action="/admin/result/edit/<%= result._id %>" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <div class="form-group">
+            <label>Student Name:</label>
+            <input type="text" class="form-control" value="<%= result.userId.firstName + ' ' + result.userId.lastName %>" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Test Title:</label>
+            <input type="text" class="form-control" value="<%= result.testId.title %>" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Score:</label>
+            <input type="number" name="score" class="form-control" value="<%= result.score %>" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Update Result</button>
+        <a href="/admin/viewResults" class="btn btn-default">Cancel</a>
+    </form>
+</div>
+</body>
+</html>

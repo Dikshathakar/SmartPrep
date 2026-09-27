@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Student Dashboard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <script>
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+        history.go(1);
+        };
+    </script>
+</head>
+
+<body>
+    <!-- ✅ Alert on Test Submission -->
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('submitted') === 'true') {
+        alert("Test has been successfully submitted!");
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    </script>
+
+    <!-- ✅ Navigation Bar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/user" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/user/chatbot">chatbot</a></li>
+                    <li><a href="/user/instructions">Test</a></li>
+                    <li><a href="/user/contactus">Contact</a></li>
+                    <li><a href="/user/profile">Profile</a></li>
+                    <li><a href="/auth/logout">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ✅ Sidebar for Student Profile -->
+    <div class="sidebar">
+        <img src="/images/userr.png" alt="Profile">
+        <h3><%= user.studentName %></h3>
+        <p>Email: <%= user.email %></p>
+        <p>Class: <%= user.studentClass %></p>
+        <div class="logout-btn">
+            <a href="/auth/logout" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
+
+    <!-- ✅ Student Dashboard -->
+    <div class="dashboard-container">
+        <h2 class="dashboard-heading">Welcome!</h2>
+        <p>Track your progress and stay updated with your placement tests.</p>
+
+    <div class="dashboard-cards">
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-pencil"></span> Take a Test</h5>
+        <p>Start your next placement test.</p>
+        <a href="/user/test/list" class="btn btn-primary">Start Now</a>
+    </div>
+
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-stats"></span> View Results</h5>
+        <p>Check your test performance.</p>
+        <a href="/user/result" class="btn btn-success">View Results</a>
+    </div>
+
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-calendar"></span> Test Schedule</h5>
+        <p>View your upcoming test dates.</p>
+        <a href="/api/student/schedule" class="btn btn-warning">View Schedule</a>
+    </div>
+
+    <div class="card">
+        <h5><span class="glyphicon glyphicon-list-alt"></span> Reports</h5>
+        <p>Download and review your reports.</p>
+        <a href="/user/report" class="btn btn-info">View Reports</a>
+    </div>
+    </div>
+       
+    </div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Manage Users | Admin Panel</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/adminHeader.css">
+    <link rel="stylesheet" href="/css/manageContact.css">
+</head>
+<body>
+
+    <!-- ✅ Navbar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/admin/adminDashboard">Dashboard</a></li>
+                    <li><a href="/admin/logout" class="text-danger">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ✅ Manage Users Page -->
+    <div class="container">
+        <h2 class="text-center">Manage Users</h2>
+
+        <!-- ✅ Search Bar -->
+        <input type="text" id="searchInput" class="form-control" placeholder="Search users by name, PRN, or email..." onkeyup="searchUsers()"><br>
+
+        <table class="table table-bordered table-hover" id="usersTable">
+            <thead>
+                <tr class="bg-primary">
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>PRN</th>
+                    <th>Class</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (users.length > 0) { %>
+                    <% users.forEach((user, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td><%= user.studentName %></td>
+                            <td><%= user.prn %></td>
+                            <td><%= user.studentClass || "Pending" %></td>
+                            <td><%= user.email && user.email !== "" ? user.email : "N/A" %></td>
+                            <td>
+                                <a href="/admin/editUser/<%= user._id %>" class="btn btn-warning btn-action">Edit</a>
+                                <a href="/admin/deleteUser/<%= user._id %>" class="btn btn-danger btn-action" onclick="return confirm('Are you sure you want to delete this user?')">Delete</a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="7" class="text-center text-danger">No users found</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function searchUsers() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let rows = document.getElementById("usersTable").getElementsByTagName("tr");
+
+            for (let i = 1; i < rows.length; i++) {
+                let name = rows[i].getElementsByTagName("td")[2];
+                let prn = rows[i].getElementsByTagName("td")[3];
+                let email = rows[i].getElementsByTagName("td")[5];
+
+                if ( name && prn && email) {
+                    let nameText = name.innerText.toLowerCase();
+                    let prnText = prn.innerText.toLowerCase();
+                    let emailText = email.innerText.toLowerCase();
+
+                    if (nameText.includes(input) || prnText.includes(input) || emailText.includes(input)) {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

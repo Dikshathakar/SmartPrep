@@ -1,0 +1,39 @@
+        .navbar {
+            opacity: 0.9;
+            background-color: #333333 !important; /* Dark Gray */
+            border: none;
+        }
+        .navbar a {
+            font-weight: bold;
+            color: #ffffff !important; 
+            font-size: 18px;
+        }
+        .navbar-nav > li > a:hover {
+            color: #cccccc !important; /* Light Gray */
+            background-color: #333333 !important; 
+        }
+        .navbar-nav > li.active > a {
+            color: #cccccc !important;
+            background-color: transparent !important; 
+        }
+        .navbar-brand {
+            font-size: 30px;
+            color: #dddddd !important; 
+            padding: 5px;
+        }
+        .dropdown-menu {
+            background-color: #333333 !important; /* Dark Gray */
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5); /* Optional: adds depth */
+        }
+
+        .dropdown-menu > li > a {
+            color: #ffffff !important;
+            padding: 10px 20px;
+        }
+
+        .dropdown-menu > li > a:hover {
+            background-color: #555555 !important;
+            color: #cccccc !important;
+        }

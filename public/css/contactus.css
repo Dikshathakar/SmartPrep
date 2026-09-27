@@ -1,0 +1,37 @@
+        body {
+            background-color: white;
+        }
+        
+        .contact-container {
+            background: white;
+            display: flex;
+            flex-wrap: wrap;
+            max-width: 800px;
+            margin: 70px auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .contact-left, .contact-right {
+            padding: 30px;
+            width: 100%;
+            text-align: center;
+        }
+        .contact-left {
+            background: #00bcd4;
+            color: white;
+        }
+        .contact-right {
+            background: white;
+        }
+        .btn-custom {
+            background: #00bcd4;
+            color: white;
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .contact-left, .contact-right {
+                width: 50%;
+                text-align: left;
+            }
+        }

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>My Profile | SmartPrep</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/profile.css">
+
+  
+
+  <script>
+    window.onload = function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const success = urlParams.get("success");
+      const error = urlParams.get("error");
+
+      if (success) {
+        alert("✅ Profile updated successfully!");
+      }
+
+      if (error) {
+        alert("❌ " + error);
+      }
+
+      // Remove query params after showing message
+      if (success || error) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    };
+  </script>
+</head>
+<body>
+  <!-- ✅ Navigation Bar -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/user" id="logo">
+          <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+        </a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/dashboard">Dashboard</a></li>
+          <li><a href="/user/chatbot">chatbot</a></li>
+          <li><a href="/user/instructions">Test</a></li>
+          <li><a href="/user/contactus">Contact</a></li>
+          <li><a href="/user/profile">Profile</a></li>
+          <li><a href="/auth/logout">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2 class="text-center">My Profile</h2>
+    <img src="/images/userr.png" alt="Profile">
+    <h3>Welcome <%= user.studentName %> ! </h3>
+
+    <form action="/user/profile" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="row">
+        <!-- Left Side -->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Student Name:</label>
+            <input type="text" class="form-control" name="studentName" value="<%= user.studentName %>" required>
+          </div>
+          <div class="form-group">
+            <label>PRN (Login ID):</label>
+            <input type="text" class="form-control" value="<%= user.prn %>" disabled>
+          </div>
+          <div class="form-group">
+            <label>Class:</label>
+            <input type="text" class="form-control" name="studentClass" value="<%= user.studentClass %>" required>
+          </div>
+        </div>
+
+        <!-- Right Side -->
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="email" class="form-control" name="email" value="<%= user.email %>">
+          </div>
+          <div class="form-group">
+            <label>New Password (leave blank to keep current):</label>
+            <input type="password" class="form-control" name="password">
+          </div>
+        </div>
+      </div>
+
+      <!-- Full width button -->
+      <div class="form-group text-center">
+        <button type="submit" class="btn btn-success update-btn">Update Profile</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

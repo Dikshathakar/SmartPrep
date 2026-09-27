@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Report - Obtained Marks Histogram</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  
+  <!-- jQuery + Bootstrap JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/header.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f9;
+    }
+    h2 {
+      text-align: center;
+      margin: 20px 0;
+      font-weight: bold;
+      color: #333;
+    }
+    .chart-container {
+      width: 80%;
+      height: 500px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 0px 12px rgba(0,0,0,0.1);
+    }
+    table {
+      width: 80%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    }
+    table th, table td {
+      border: 1px solid #333;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+    table th {
+      background: #40668f;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ✅ Navbar -->
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="/user" id="logo">
+          <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+        </a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/user/dashboard">Dashboard</a></li>
+          <li><a href="/auth/logout">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ✅ Report Content -->
+  <div class="container">
+    <h2>User Performance Report</h2>
+
+    <div class="chart-container">
+      <canvas id="marksChart"></canvas>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Test Name</th>
+          <th>Obtained Marks</th>
+          <th>Total Marks</th>
+          <th>Performance</th>
+          <th>Retake Test</th>
+        </tr>
+      </thead>
+      <tbody id="reportTable"></tbody>
+    </table>
+  </div>
+
+  <!-- ✅ Chart + Table Script -->
+  <script>
+    const testNames = JSON.parse('<%- JSON.stringify(testNames || []) %>'); 
+    const scores = JSON.parse('<%- JSON.stringify(scores || []) %>');
+    const totalMarks = JSON.parse('<%- JSON.stringify(totalMarks || []) %>');
+    const testIds = JSON.parse('<%- JSON.stringify(testIds || []) %>'); // ✅
+
+    // Function to calculate performance
+    function getPerformance(score, total) {
+      const percentage = (score / total) * 100;
+      if (percentage >= 75) return { text: "Good", color: "green" };
+      else if (percentage >= 50) return { text: "Average", color: "blue" };
+      else return { text: "Poor", color: "red" };
+    }
+
+    // Fill Table
+    const tableBody = document.getElementById("reportTable");
+    testNames.forEach((test, i) => {
+      const perf = getPerformance(scores[i], totalMarks[i]);
+
+      // Retake link only if Poor
+      const retakeLink = (perf.text === "Poor") 
+        ? `<a href="/user/retake/${testIds[i]}" class="btn btn-danger btn-sm">Try again</a>` 
+        : "-";
+
+      const row = `<tr>
+        <td>${test}</td>
+        <td>${scores[i]}</td>
+        <td>${totalMarks[i]}</td>
+        <td style="color:${perf.color}; font-weight:bold;">${perf.text}</td>
+        <td>${retakeLink}</td>
+      </tr>`;
+      tableBody.innerHTML += row;
+    });
+
+    // Chart
+    const ctx = document.getElementById('marksChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: testNames,
+        datasets: [
+          {
+            label: 'Obtained Marks',
+            data: scores,
+            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+            barPercentage: 0.5,
+            categoryPercentage: 0.6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { 
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              font: { weight: 'bold' }
+            }
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'end',
+            formatter: function(value, context) {
+              const index = context.dataIndex;
+              return value + " / " + totalMarks[index];
+            },
+            color: '#000',
+            font: { weight: 'bold' }
+          }
+        },
+        scales: {
+          x: {
+            title: { display: true, text: 'Tests', font: { weight: 'bold' } },
+            ticks: { font: { weight: 'bold' } }
+          },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Marks', font: { weight: 'bold' } },
+            ticks: { font: { weight: 'bold' } }
+          }
+        }
+      },
+      plugins: [ChartDataLabels]
+    });
+  </script>
+</body>
+</html>

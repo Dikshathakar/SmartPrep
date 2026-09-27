@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Interview Questions Excel</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="/css/adminHeader.css">
+  <link rel="stylesheet" href="/css/uploadPDF.css">
+
+  <script>
+    window.onload = function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const success = urlParams.get("success");
+      const error = urlParams.get("error");
+
+      if (success) {
+        alert("✅ " + success);
+      }
+
+      if (error) {
+        alert("❌ " + error);
+      }
+
+      // remove query params after showing message
+      if (success || error) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    };
+  </script>
+</head>
+
+<body class="bg-light">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/adminDashboard" id="logo">
+          <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+        </a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/admin/adminDashboard">Dashboard</a></li>
+        <li><a href="/admin/logout" class="text-danger">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <h1>Upload Interview Questions (Excel)</h1>
+  <div class="uploadForm">
+    <form action="/admin/uploadInterviewExcel" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>"> 
+      
+      <div class="form-group">
+        <label>Select Excel File (.xlsx):</label>
+        <input type="file" name="file" accept=".xlsx" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Upload</button>
+    </form>
+  </div>
+</body>
+</html>

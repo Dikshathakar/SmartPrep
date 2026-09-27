@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Students</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/adminHeader.css">
+    <link rel="stylesheet" href="/css/schedule.css">
+  </head>
+  
+  <body class="bg-light">
+  <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/adminDashboard" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/admin/adminDashboard">Dashboard</a></li>
+                    <li><a href="/admin/logout" class="text-danger">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+      
+    <h2>Create Test Schedule</h2>
+
+<div class="container">
+  <form action="/admin/schedule/create" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <!-- Exam Date -->
+    <label for="examDate">Exam Date:</label>
+    <input type="date" name="examDate" required>
+    <hr>
+
+    <!-- Aptitude Test -->
+    <h4>Aptitude Test</h4>
+    <input type="hidden" name="type1" value="Aptitude">
+    <label>Subtype:</label>
+    <input type="text" name="subtype1" placeholder="e.g., Quant, Reasoning" required>
+    <label>Marks:</label>
+    <input type="number" name="marks1" value="20" readonly>
+    <label>Start Time:</label>
+    <input type="time" name="startTime1" required>
+    <label>End Time:</label>
+    <input type="time" name="endTime1" required>
+    <hr>
+
+    <!-- Technical Test -->
+    <h4>Technical MCQ Test</h4>
+    <input type="hidden" name="type2" value="Technical MCQ">
+    <label>Subject:</label>
+    <input type="text" name="subtype2" placeholder="e.g., DBMS, OS, Java" required>
+    <label>Marks:</label>
+    <input type="number" name="marks2" value="20" readonly>
+    <label>Start Time:</label>
+    <input type="time" name="startTime2" required>
+    <label>End Time:</label>
+    <input type="time" name="endTime2" required>
+    <hr>
+
+    <!-- Programming Test -->
+    <h4>Programming Test</h4>
+    <input type="hidden" name="type3" value="Programming">
+    <label>Subject:</label>
+    <input type="text" name="subtype3" placeholder="e.g., Java, Python, DS" required>
+    <label>Marks:</label>
+    <input type="number" name="marks3" value="20" readonly>
+    <label>Start Time:</label>
+    <input type="time" name="startTime3" required>
+    <label>End Time:</label>
+    <input type="time" name="endTime3" required>
+    <br><br>
+
+    <button type="submit" class="btn btn-primary">Create Schedule</button>
+  </form>
+</div>
+</body>
+</html>

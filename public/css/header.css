@@ -1,0 +1,24 @@
+.navbar {
+    opacity: 0.9;
+    background-color: #1b3b58 !important;
+    border: none;
+    margin-bottom: 0;
+}
+.navbar a {
+    font-weight: bold;
+    color: #ffffff !important;
+    font-size: 18px;
+}
+.navbar-nav > li > a:hover {
+    color: #5dacbd !important;
+    background-color: transparent !important;
+}
+.navbar-nav > li.active > a {
+    color: #5dacbd !important;
+    background-color: transparent !important;
+}
+.navbar-brand {
+    font-size: 30px;
+    color: black !important;
+    padding: 5px;
+}

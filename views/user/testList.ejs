@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Available Tests</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/instructions.css"> 
+
+    <style>
+        .btn-test {
+            margin: 10px 0;
+            width: 100%;
+            text-align: left;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        .btn-test img {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <% if (typeof submitted !== 'undefined' && submitted) { %>
+    <script>
+        alert('✅ Test submitted successfully!');
+    </script>
+    <% } %>
+
+    <% if (alreadySubmitted) { %>
+    <script>
+        alert('⚠️ You have already submitted this test and cannot retake it.');
+    </script>
+    <% } %>
+
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>                        
+                </button>
+                <a class="navbar-brand" href="/user" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/auth/logout">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Test List Content -->
+    <div class="container">
+        <h1 class="text-center">Available Tests</h1>
+        <hr>
+
+        <% if (tests && tests.length > 0) { %>
+            <% tests.forEach((test, index) => { %>
+                <form action="/user/camera-check/<%= test._id %>" method="GET">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn btn-primary btn-test">
+                        <img src="/images/exam.png" width="20px" alt="Test Icon">
+                        Take Test <%= index + 1 %> - <%= test.title %>
+                    </button>
+                </form>
+            <% }); %>
+        <% } else { %>
+            <p class="text-center">No tests are currently available. Please check back later.</p>
+        <% } %>
+    </div>
+</body>
+</html>

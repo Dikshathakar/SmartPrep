@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Question</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/adminHeader.css"></head>
+    <link rel="stylesheet" href="/css/addQuestions.css"></head>
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const error = urlParams.get('error');
+
+    if (success) {
+        alert(decodeURIComponent(success));
+        window.location.href = "/admin/questions";
+    }
+
+    if (error) {
+        alert(decodeURIComponent(error));
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+});
+</script>
+
+<body>
+<nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/adminDashboard" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/admin/adminDashboard">Dashboard</a></li>
+                    <li><a href="/admin/logout" class="text-danger">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+<div class="container">
+    <h2>Edit Question</h2>
+
+    <form action="/admin/questions/edit/<%= question._id %>" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">        
+
+        <div class="form-group">
+            <label>Company</label>
+            <input type="text" name="company" class="form-control" value="<%= question.company %>" required>
+        </div>
+        <div class="form-group">
+            <label>Category</label>
+            <input type="text" name="category" class="form-control" value="<%= question.category %>" required>
+        </div>
+        <div class="form-group">
+            <label>Subcategory</label>
+            <input type="text" name="subcategory" class="form-control" value="<%= question.subcategory %>">
+        </div>
+        <div class="form-group">
+            <label>Type</label>
+            <input type="text" name="type" class="form-control" value="<%= question.type %>" required>
+        </div>
+        <div class="form-group">
+            <label>Question</label>
+            <textarea name="question" class="form-control" required><%= question.question %></textarea>
+        </div>
+        <div class="form-group">
+            <label>Answer</label>
+            <textarea name="answer" class="form-control" required><%= question.answer %></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Question</button>
+    </form>
+</div>
+
+</body>
+</html>

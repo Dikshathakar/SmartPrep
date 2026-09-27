@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Student SignIn</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/signin.css">
+
+    <script>
+  window.onload = function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get("success");
+    const error = urlParams.get("error");
+
+    if (success) {
+      alert("✅ " + success);
+    }
+
+    if (error) {
+      alert("❌ " + error);
+    }
+
+    // Remove query params from the URL after showing the alert
+    if (success || error) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  };
+</script>
+
+</head>
+<body>
+    <!-- ✅ Navbar -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#" id="logo">
+                    <span><img src="/images/exam.png" height="38px" width="35px"></span> SmartPrep
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/instructions">Test</a></li>
+                    <li><a href="/aboutus">About</a></li>
+                    <li><a href="/contactus">Contact</a></li>
+                    <li><a href="/studlogin" class="text-danger">Student Login</a></li>
+                    <li><a href="/adminsignin" class="text-danger">Admin Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ✅ Sign-In Form -->
+    <div class="container">
+        <h2>Student Sign In</h2>
+        <form id="loginForm" method="POST" action="/auth/submitSignin">
+            <input type="hidden" name="_csrf" id="csrfToken" value="<%= csrfToken %>">
+
+            <input type="text" name="prn" placeholder="Enter PRN Number" required>
+            <input type="password" name="password" placeholder="Enter Password" required>
+
+            <div class="text-right">
+                <a href="#" data-toggle="modal" data-target="#forgotModal">Forgot Password?</a>
+            </div>
+
+            <input type="submit" value="Sign In" class="btn btn-primary btn-block">
+        </form>
+        <p>Don't have an account? <a href="/studlogin">Sign Up</a></p>
+    </div>
+
+    <!-- ✅ Forgot Password Modal -->
+    <div class="modal fade" id="forgotModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content p-3">
+                <div class="modal-header">
+                    <h4 class="modal-title">Reset Password</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="forgotForm">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <div class="form-group">
+                            <label>Enter PRN Number:</label>
+                            <input type="text" name="prn" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block">Send Reset Link</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ JavaScript -->
+    <script>
+        // Login Form Submit
+        document.getElementById("loginForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const data = {
+                prn: formData.get("prn"),
+                password: formData.get("password")
+            };
+
+            try {
+                const response = await fetch("/auth/submitSignin", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "CSRF-Token": formData.get("_csrf")
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    window.location.href = result.redirect;
+                } else {
+                    alert(result.error || "Invalid login credentials");
+                }
+            } catch (error) {
+                alert("An unexpected error occurred.");
+            }
+        });
+
+        // Forgot Password Submit
+        // Forgot Password Submit
+document.getElementById("forgotForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const data = { prn: formData.get("prn") };
+
+    try {
+        const response = await fetch("/auth/verify-prn", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "CSRF-Token": formData.get("_csrf")
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        if (response.ok && result.success) {
+            window.location.href = `/auth/reset-password/${result.prn}`; // ✅ Redirect to reset page
+        } else {
+            alert(result.error || "PRN not found.");
+        }
+    } catch (error) {
+        alert("An error occurred while verifying PRN.");
+    }
+});
+
+    </script>
+</body>
+</html>
